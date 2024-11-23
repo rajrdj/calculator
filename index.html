@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Price Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .breakdown {
+            margin-top: 15px;
+        }
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .final-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Product Price Calculator</h2>
+        
+        <div class="input-group">
+            <label>Base Product Price (₹):</label>
+            <input type="number" id="basePrice" value="100">
+            
+            <label>Total Product Quantity:</label>
+            <input type="number" id="totalQuantity" value="100">
+            
+            <label>Actual Received Quantity:</label>
+            <input type="number" id="receivedQuantity" value="96">
+            
+            <label>Transportation Cost (₹):</label>
+            <input type="number" id="transportCost" value="560">
+            
+            <label>GST Rate (%):</label>
+            <input type="number" id="gstRate" value="3.5">
+            
+            <label>Return Shipping Fee (₹):</label>
+            <input type="number" id="returnShippingFee" value="160">
+            
+            <label>Expected Return Rate (%):</label>
+            <input type="number" id="returnRate" value="5">
+            
+            <label>Damage Rate (%):</label>
+            <input type="number" id="damageRate" value="2">
+            
+            <label>Rating Card Cost (₹):</label>
+            <input type="number" id="ratingCardCost" value="1">
+            
+            <label>Packaging Cost (₹):</label>
+            <input type="number" id="packagingCost" value="15">
+            
+            <label>Margin (₹):</label>
+            <input type="number" id="margin" value="50">
+        </div>
+
+        <div class="result-section">
+            <h3>Price Breakdown</h3>
+            <div class="breakdown" id="breakdown"></div>
+            <div class="final-price" id="finalPrice"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculatePrice() {
+            // Get input values
+            const basePrice = parseFloat(document.getElementById('basePrice').value);
+            const totalQuantity = parseFloat(document.getElementById('totalQuantity').value);
+            const receivedQuantity = parseFloat(document.getElementById('receivedQuantity').value);
+            const transportCost = parseFloat(document.getElementById('transportCost').value);
+            const gstRate = parseFloat(document.getElementById('gstRate').value);
+            const returnShippingFee = parseFloat(document.getElementById('returnShippingFee').value);
+            const returnRate = parseFloat(document.getElementById('returnRate').value);
+            const damageRate = parseFloat(document.getElementById('damageRate').value);
+            const ratingCardCost = parseFloat(document.getElementById('ratingCardCost').value);
+            const packagingCost = parseFloat(document.getElementById('packagingCost').value);
+            const margin = parseFloat(document.getElementById('margin').value);
+
+            // Calculate adjusted per piece price
+            const adjustedPerPiecePrice = (basePrice * totalQuantity) / receivedQuantity;
+            
+            // Calculate transportation cost per piece
+            const transportPerPiece = transportCost / receivedQuantity;
+            
+            // Calculate GST amount
+            const gstAmount = adjustedPerPiecePrice * (gstRate / 100);
+            
+            // Calculate return cost
+            const returnCost = (returnShippingFee * returnRate) / 100;
+            
+            // Calculate damage cost
+            const damageCost = (returnShippingFee * damageRate) / 100;
+
+            // Calculate total cost
+            const totalCost = adjustedPerPiecePrice + 
+                            transportPerPiece + 
+                            gstAmount + 
+                            returnCost + 
+                            damageCost + 
+                            ratingCardCost + 
+                            packagingCost + 
+                            margin;
+
+            // Update breakdown
+            const breakdown = document.getElementById('breakdown');
+            breakdown.innerHTML = `
+                <div class="breakdown-item">
+                    <span>Adjusted Per Piece Price:</span>
+                    <span>₹${adjustedPerPiecePrice.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Transportation Cost Per Piece:</span>
+                    <span>₹${transportPerPiece.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>GST Amount:</span>
+                    <span>₹${gstAmount.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Return Cost:</span>
+                    <span>₹${returnCost.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Damage Cost:</span>
+                    <span>₹${damageCost.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Rating Card Cost:</span>
+                    <span>₹${ratingCardCost.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Packaging Cost:</span>
+                    <span>₹${packagingCost.toFixed(2)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Margin:</span>
+                    <span>₹${margin.toFixed(2)}</span>
+                </div>
+            `;
+
+            // Update final price
+            document.getElementById('finalPrice').innerHTML = `Final Price: ₹${totalCost.toFixed(2)}`;
+        }
+
+        // Add event listeners to all inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculatePrice);
+        });
+
+        // Initial calculation
+        calculatePrice();
+    </script>
+</body>
+</html>
